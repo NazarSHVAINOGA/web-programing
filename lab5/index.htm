@@ -31,49 +31,34 @@
     </div>
 
     <script>
-        const categories = [
-            { id: 1, name: "Електроніка", shortname: "electronics", notes: "Сучасні гаджети" },
-            { id: 2, name: "Одяг", shortname: "clothes", notes: "Мода та стиль" },
-            { id: 3, name: "Книги", shortname: "books", notes: "Розумний вибір" }
-        ];
+        async function fetchCategories() {
+            const response = await fetch('categories.json');
+            return await response.json();
+        }
 
-        const products = {
-            electronics: [
-                { id: 1, name: "Смартфон", description: "Новий смартфон", price: "7000 грн", image: "https://via.placeholder.com/200" },
-                { id: 2, name: "Ноутбук", description: "Потужний ноутбук", price: "25000 грн", image: "https://via.placeholder.com/200" },
-                { id: 3, name: "Навушники", description: "Бездротові навушники", price: "2000 грн", image: "https://via.placeholder.com/200" },
-                { id: 4, name: "Смарт-годинник", description: "Сучасний смарт-годинник", price: "5000 грн", image: "https://via.placeholder.com/200" }
-            ],
-            clothes: [
-                { id: 1, name: "Футболка", description: "Зручна футболка", price: "500 грн", image: "https://via.placeholder.com/200" },
-                { id: 2, name: "Джинси", description: "Стильні джинси", price: "1000 грн", image: "https://via.placeholder.com/200" },
-                { id: 3, name: "Куртка", description: "Тепла зимова куртка", price: "3000 грн", image: "https://via.placeholder.com/200" },
-                { id: 4, name: "Кросівки", description: "Зручні спортивні кросівки", price: "2000 грн", image: "https://via.placeholder.com/200" }
-            ],
-            books: [
-                { id: 1, name: "Роман", description: "Цікава книга", price: "300 грн", image: "https://via.placeholder.com/200" },
-                { id: 2, name: "Енциклопедія", description: "Корисна енциклопедія", price: "500 грн", image: "https://via.placeholder.com/200" },
-                { id: 3, name: "Казки", description: "Казки для дітей", price: "250 грн", image: "https://via.placeholder.com/200" },
-                { id: 4, name: "Детектив", description: "Захоплюючий детектив", price: "400 грн", image: "https://via.placeholder.com/200" }
-            ]
-        };
+        async function fetchProducts(categoryShortname) {
+            const response = await fetch(`${categoryShortname}.json`);
+            return await response.json();
+        }
 
-        document.getElementById("catalog").addEventListener("click", () => {
+        document.getElementById("catalog").addEventListener("click", async () => {
             const content = document.getElementById("content");
+            const categories = await fetchCategories();
             content.innerHTML = "<h2>Категорії</h2><ul class='list-group'>" +
                 categories.map(category => `<li class='list-group-item'><a href='#' onclick='loadCategory("${category.shortname}")'>${category.name}</a></li>`).join("") +
                 "<li class='list-group-item'><a href='#' onclick='loadRandomCategory()'>Specials</a></li></ul>";
         });
 
-        function loadCategory(shortname) {
+        async function loadCategory(shortname) {
             const content = document.getElementById("content");
+            const categories = await fetchCategories();
             const category = categories.find(cat => cat.shortname === shortname);
-            const items = products[shortname] || [];
+            const products = await fetchProducts(shortname);
 
             content.innerHTML = `<h2>${category.name}</h2>` +
                 `<p>${category.notes}</p>` +
                 `<div class='row'>` +
-                items.map(item => `
+                products.map(item => `
                     <div class='col-md-3 item'>
                         <img src='${item.image}' alt='${item.name}'>
                         <h3>${item.name}</h3>
@@ -83,7 +68,8 @@
                 `</div>`;
         }
 
-        function loadRandomCategory() {
+        async function loadRandomCategory() {
+            const categories = await fetchCategories();
             const randomCategory = categories[Math.floor(Math.random() * categories.length)];
             loadCategory(randomCategory.shortname);
         }
