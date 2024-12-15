@@ -1,112 +1,107 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лабораторна робота №5</title>
+    <title>Ajax Catalog</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
     <style>
-        .item {
-            margin: 10px;
+        .product {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
             text-align: center;
+            margin-bottom: 15px;
         }
-        .item img {
-            max-width: 200px;
-            max-height: 200px;
+        .product img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="d-flex justify-content-between align-items-center py-3">
-            <h1>Каталог</h1>
-            <nav>
-                <a href="#" class="btn btn-primary" id="home">Додому</a>
-                <a href="#" class="btn btn-secondary" id="catalog">Каталог</a>
-            </nav>
-        </header>
-        <main id="content">
-            <p>Ласкаво просимо до нашого магазину!</p>
-        </main>
-    </div>
+<div class="container py-4">
+    <header class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Ajax Catalog</h1>
+        <nav>
+            <a href="#" id="home-link" class="btn btn-primary">Home</a>
+            <a href="#" id="catalog-link" class="btn btn-secondary">Catalog</a>
+        </nav>
+    </header>
 
-    <script>
-        async function fetchCategories() {
-            try {
-                const response = await fetch('categories.json');
-                if (!response.ok) throw new Error('Failed to load categories.');
-                return await response.json();
-            } catch (error) {
-                console.error(error);
-                return [];
-            }
-        }
+    <main id="content">
+        <p>Welcome to the Ajax Catalog. Use the navigation links to explore!</p>
+    </main>
+</div>
 
-        async function fetchProducts(categoryShortname) {
-            try {
-                const response = await fetch(`${categoryShortname}.json`);
-                if (!response.ok) throw new Error('Failed to load products.');
-                return await response.json();
-            } catch (error) {
-                console.error(error);
-                return [];
-            }
-        }
+<script>
+    document.getElementById('home-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('content').innerHTML = '<p>Welcome to the Ajax Catalog. Use the navigation links to explore!</p>';
+    });
 
-        document.getElementById("catalog").addEventListener("click", async () => {
-            const content = document.getElementById("content");
-            const categories = await fetchCategories();
-            if (categories.length === 0) {
-                content.innerHTML = "<p>Не вдалося завантажити категорії.</p>";
-                return;
-            }
+    document.getElementById('catalog-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        loadCatalog();
+    });
 
-            content.innerHTML = `<h2>Категорії</h2><ul class='list-group'>` +
-                categories.map(category => `<li class='list-group-item'><a href='#' onclick='loadCategory("${category.shortname}")'>${category.name}</a></li>`).join("") +
-                `<li class='list-group-item'><a href='#' onclick='loadRandomCategory()'>Specials</a></li></ul>`;
-        });
+    function loadCatalog() {
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(categories => {
+                const content = document.getElementById('content');
+                content.innerHTML = '<h2>Catalog</h2>';
 
-        async function loadCategory(shortname) {
-            const content = document.getElementById("content");
-            const categories = await fetchCategories();
-            const category = categories.find(cat => cat.shortname === shortname);
+                categories.forEach(category => {
+                    const categoryLink = document.createElement('a');
+                    categoryLink.href = '#';
+                    categoryLink.className = 'btn btn-outline-primary m-2';
+                    categoryLink.textContent = category.name;
+                    categoryLink.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        loadCategory(category.shortname);
+                    });
+                    content.appendChild(categoryLink);
+                });
 
-            if (!category) {
-                content.innerHTML = "<p>Категорія не знайдена.</p>";
-                return;
-            }
+                const specialsLink = document.createElement('a');
+                specialsLink.href = '#';
+                specialsLink.className = 'btn btn-outline-danger m-2';
+                specialsLink.textContent = 'Specials';
+                specialsLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                    loadCategory(randomCategory.shortname);
+                });
+                content.appendChild(specialsLink);
+            });
+    }
 
-            const products = await fetchProducts(shortname);
+    function loadCategory(shortname) {
+        fetch(`${shortname}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const content = document.getElementById('content');
+                content.innerHTML = `<h2>${data.categoryName}</h2>`;
 
-            content.innerHTML = `<h2>${category.name}</h2>` +
-                `<p>${category.notes || ''}</p>` +
-                `<div class='row'>` +
-                products.map(item => `
-                    <div class='col-md-3 item'>
-                        <img src='${item.image}' alt='${item.name}'>
-                        <h3>${item.name}</h3>
-                        <p>${item.description}</p>
-                        <p>${item.price}</p>
-                    </div>`).join("") +
-                `</div>`;
-        }
+                const productGrid = document.createElement('div');
+                productGrid.className = 'row';
 
-        async function loadRandomCategory() {
-            const categories = await fetchCategories();
-            if (categories.length === 0) {
-                const content = document.getElementById("content");
-                content.innerHTML = "<p>Не вдалося завантажити категорії для випадкового вибору.</p>";
-                return;
-            }
+                data.products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'col-md-3 product';
+                    productCard.innerHTML = `
+                        <img src="https://place-hold.it/200x200" alt="${product.name}">
+                        <h5>${product.name}</h5>
+                        <p>${product.description}</p>
+                        <p><strong>${product.price}</strong></p>
+                    `;
+                    productGrid.appendChild(productCard);
+                });
 
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            loadCategory(randomCategory.shortname);
-        }
-
-        document.getElementById("home").addEventListener("click", () => {
-            const content = document.getElementById("content");
-            content.innerHTML = "<p>Ласкаво просимо до нашого магазину!</p>";
-        });
-    </script>
+                content.appendChild(productGrid);
+            });
+    }
+</script>
 </body>
 </html>
