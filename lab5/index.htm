@@ -32,31 +32,54 @@
 
     <script>
         async function fetchCategories() {
-            const response = await fetch('categories.json');
-            return await response.json();
+            try {
+                const response = await fetch('categories.json');
+                if (!response.ok) throw new Error('Failed to load categories.');
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                return [];
+            }
         }
 
         async function fetchProducts(categoryShortname) {
-            const response = await fetch(`${categoryShortname}.json`);
-            return await response.json();
+            try {
+                const response = await fetch(`${categoryShortname}.json`);
+                if (!response.ok) throw new Error('Failed to load products.');
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                return [];
+            }
         }
 
         document.getElementById("catalog").addEventListener("click", async () => {
             const content = document.getElementById("content");
             const categories = await fetchCategories();
-            content.innerHTML = "<h2>Категорії</h2><ul class='list-group'>" +
+            if (categories.length === 0) {
+                content.innerHTML = "<p>Не вдалося завантажити категорії.</p>";
+                return;
+            }
+
+            content.innerHTML = `<h2>Категорії</h2><ul class='list-group'>` +
                 categories.map(category => `<li class='list-group-item'><a href='#' onclick='loadCategory("${category.shortname}")'>${category.name}</a></li>`).join("") +
-                "<li class='list-group-item'><a href='#' onclick='loadRandomCategory()'>Specials</a></li></ul>";
+                `<li class='list-group-item'><a href='#' onclick='loadRandomCategory()'>Specials</a></li></ul>`;
         });
 
         async function loadCategory(shortname) {
             const content = document.getElementById("content");
             const categories = await fetchCategories();
             const category = categories.find(cat => cat.shortname === shortname);
+
+            if (!category) {
+                content.innerHTML = "<p>Категорія не знайдена.</p>";
+                return;
+            }
+
             const products = await fetchProducts(shortname);
 
             content.innerHTML = `<h2>${category.name}</h2>` +
-                `<p>${category.notes}</p>` +
+                `<p>${category.notes || ''}</p>` +
                 `<div class='row'>` +
                 products.map(item => `
                     <div class='col-md-3 item'>
@@ -70,6 +93,12 @@
 
         async function loadRandomCategory() {
             const categories = await fetchCategories();
+            if (categories.length === 0) {
+                const content = document.getElementById("content");
+                content.innerHTML = "<p>Не вдалося завантажити категорії для випадкового вибору.</p>";
+                return;
+            }
+
             const randomCategory = categories[Math.floor(Math.random() * categories.length)];
             loadCategory(randomCategory.shortname);
         }
