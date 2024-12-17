@@ -66,9 +66,9 @@ function triangle(value1, type1, value2, type2) {
       console.log("Сталася помилка: " + error.message);
       return "failed";
   }
-}
+
   
       return `c = ${c.toFixed(2)}, a = ${a.toFixed(2)}, b = ${b.toFixed(2)}, alpha = ${alpha.toFixed(2)}°, beta = ${beta.toFixed(2)}°`;
     }
-  });
+  
   
