@@ -1,0 +1,33 @@
+{
+    "categoryName": "Books",
+    "products": [
+        {
+            "id": 1,
+            "name": "Fiction Book",
+            "shortname": "fiction",
+            "description": "A captivating fiction novel.",
+            "price": "$14"
+        },
+        {
+            "id": 2,
+            "name": "Science Book",
+            "shortname": "science",
+            "description": "An informative science book.",
+            "price": "$25"
+        },
+        {
+            "id": 3,
+            "name": "Cookbook",
+            "shortname": "cookbook",
+            "description": "A book full of recipes.",
+            "price": "$20"
+        },
+        {
+            "id": 4,
+            "name": "Biography",
+            "shortname": "biography",
+            "description": "An inspiring biography.",
+            "price": "$18"
+        }
+    ]
+}

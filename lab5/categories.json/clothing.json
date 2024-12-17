@@ -1,0 +1,33 @@
+{
+    "categoryName": "Clothing",
+    "products": [
+        {
+            "id": 1,
+            "name": "T-Shirt",
+            "shortname": "tshirt",
+            "description": "A comfortable cotton T-shirt.",
+            "price": "$19"
+        },
+        {
+            "id": 2,
+            "name": "Jeans",
+            "shortname": "jeans",
+            "description": "Stylish denim jeans.",
+            "price": "$49"
+        },
+        {
+            "id": 3,
+            "name": "Jacket",
+            "shortname": "jacket",
+            "description": "A warm winter jacket.",
+            "price": "$89"
+        },
+        {
+            "id": 4,
+            "name": "Sneakers",
+            "shortname": "sneakers",
+            "description": "Comfortable sneakers.",
+            "price": "$59"
+        }
+    ]
+}

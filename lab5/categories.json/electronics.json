@@ -1,0 +1,33 @@
+{
+    "categoryName": "Electronics",
+    "products": [
+        {
+            "id": 1,
+            "name": "Smartphone",
+            "shortname": "smartphone",
+            "description": "A high-quality smartphone.",
+            "price": "$699"
+        },
+        {
+            "id": 2,
+            "name": "Laptop",
+            "shortname": "laptop",
+            "description": "A powerful laptop.",
+            "price": "$999"
+        },
+        {
+            "id": 3,
+            "name": "Headphones",
+            "shortname": "headphones",
+            "description": "Noise-cancelling headphones.",
+            "price": "$199"
+        },
+        {
+            "id": 4,
+            "name": "Smartwatch",
+            "shortname": "smartwatch",
+            "description": "A stylish smartwatch.",
+            "price": "$249"
+        }
+    ]
+}
