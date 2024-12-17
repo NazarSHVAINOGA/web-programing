@@ -66,7 +66,7 @@ function triangle(value1, type1, value2, type2) {
       console.log("Сталася помилка: " + error.message);
       return "failed";
   }
-
+}
   
   
   
