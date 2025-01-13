@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор</title>
+    <style>
+        #helpContent {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Калькулятор</h1>
+
+    <!-- Введення чисел -->
+    <label for="num1">Число 1:</label>
+    <input type="number" id="num1" step="any"><br><br>
+    
+    <label for="num2">Число 2:</label>
+    <input type="number" id="num2" step="any"><br><br>
+
+    <!-- Кнопки для обчислень -->
+    <button onclick="calculate('+')">Додавання</button>
+    <button onclick="calculate('-')">Віднімання</button>
+    <button onclick="calculate('*')">Множення</button>
+    <button onclick="calculate('/')">Ділення</button><br><br>
+
+    <button onclick="calculateLog()">Натуральний логарифм (ln)</button><br><br>
+    <button onclick="calculateSin()">Синус</button><br><br>
+    <button onclick="calculateTan()">Тангенс</button><br><br>
+
+    <h2>Результат:</h2>
+    <div id="result">0</div><br><br>
+
+    <!-- Кнопка для показу довідки -->
+    <button onclick="showHelp()">Показати довідку</button>
+    
+    <!-- Блок для довідки -->
+    <div id="helpContent"></div>
+
+    <script>
+        // Функція для обчислень
+        function calculate(operation) {
+            const num1 = parseFloat(document.getElementById("num1").value);
+            const num2 = parseFloat(document.getElementById("num2").value);
+            let result;
+
+            if (isNaN(num1) || isNaN(num2)) {
+                alert("Будь ласка, введіть коректні числа.");
+                return;
+            }
+
+            switch (operation) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    if (num2 === 0) {
+                        alert("Ділення на нуль неможливе!");
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+            }
+            
+            document.getElementById("result").textContent = result;
+        }
+
+        // Обчислення натурального логарифма
+        function calculateLog() {
+            const num1 = parseFloat(document.getElementById("num1").value);
+            
+            if (isNaN(num1)) {
+                alert("Будь ласка, введіть коректне число.");
+                return;
+            }
+            
+            if (num1 <= 0) {
+                alert("Число повинно бути більше 0 для обчислення логарифма.");
+                return;
+            }
+
+            const result = Math.log(num1);
+            document.getElementById("result").textContent = result;
+        }
+
+        // Обчислення синуса
+        function calculateSin() {
+            const num1 = parseFloat(document.getElementById("num1").value);
+            
+            if (isNaN(num1)) {
+                alert("Будь ласка, введіть коректне число.");
+                return;
+            }
+
+            // Перетворення градусів на радіани
+            const result = Math.sin(num1 * Math.PI / 180);
+            document.getElementById("result").textContent = result;
+        }
+
+        // Обчислення тангенса
+        function calculateTan() {
+            const num1 = parseFloat(document.getElementById("num1").value);
+            
+            if (isNaN(num1)) {
+                alert("Будь ласка, введіть коректне число.");
+                return;
+            }
+
+            // Перетворення градусів на радіани
+            const result = Math.tan(num1 * Math.PI / 180);
+            document.getElementById("result").textContent = result;
+        }
+
+        // Завантаження довідки з серверу
+        function showHelp() {
+            fetch('server.json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("helpContent").style.display = "block";
+                    document.getElementById("helpContent").innerHTML = `
+                        <h3>Натуральний логарифм (ln)</h3>
+                        <p>${data.log}</p>
+                        <h3>Синус</h3>
+                        <p>${data.sin}</p>
+                        <h3>Тангенс</h3>
+                        <p>${data.tan}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error("Помилка при завантаженні довідки:", error);
+                });
+        }
+    </script>
+
+</body>
+</html>
